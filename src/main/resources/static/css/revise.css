@@ -1,0 +1,154 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.title {
+    border-left: 1px solid rgb(210, 218, 224);
+    font-size: 30px;
+    display: inline-block;
+    padding-left: 45px;
+    height: 65px;
+    line-height: 65px;
+    vertical-align: top;
+    color: #525151;
+    text-align: center;
+
+}
+
+.logon {
+    width: 600px;
+    position: relative;
+    bottom: 130px;
+    left: 70px;
+}
+
+.main {
+    width: 530px;
+    margin: 0 auto;
+}
+
+.steps-icon {
+    color: #fff;
+    color: #bec9d2;
+    border: 1px solid #bec9d2;
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 20px;
+
+}
+
+.link {
+    display: inline-block;
+    height: 0;
+    flex-grow: 1;
+    border: 1px solid #bec9d2;
+    width: 100px;
+    vertical-align: top;
+    margin-top: 15px;
+}
+
+.step-label {
+    display: inline-block;
+    height: 30px;
+    color: #bec9d2;
+    vertical-align: top;
+    line-height: 30px;
+}
+
+.step-selected {
+    color: #fff;
+    border-color: #5ca9e7;
+    background-color: #5ca9e7;
+}
+
+.input-lable {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    margin-left: 18px;
+    font-size: 18px;
+}
+
+.error-msg {
+    color: red;
+    height: 10px;
+    margin-bottom: 40px;
+    margin-left: 18px;
+}
+
+.common-input {
+    width: 510px;
+    border-radius: 20px;
+    padding-left: 15px;
+    height: 40px;
+    border: 1px solid #e6ecf2;
+}
+
+input:focus {
+    outline: none;
+    border: 1px solid #5ca9e7;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    background-color: rgba(255, 255, 255, 0.5);
+    outline: none;
+    border: 1px solid #e6ecf2;
+}
+
+.layui-input {
+    border-radius: 20px;
+    padding-left: 15px;
+    height: 40px;
+    font-size: 18px;
+    border: 1px solid #e6ecf2;
+}
+
+.layui-input-block {
+    margin-left: 0px;
+    width: 510px;
+}
+
+.layui-form-select dl dd.layui-this {
+    background-color: #5ca9e7;
+}
+
+.input-mail {
+    width: 393px;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.sendCode {
+    float: right;
+    background-color: #F5F7FA;
+    color: #5ca9e7;
+    width: 120px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    border: 1px solid #e6ecf2;
+    height: 44px;
+}
+
+.common-next {
+    float: right;
+    width: 200px;
+    margin-right: 11px;
+    border-radius: 20px;
+    height: 44px;
+    border: 1px solid #e6ecf2;
+}
+
+.common-before {
+    float: left;
+    height: 44px;
+    width: 200px;
+    border-radius: 20px;
+    background-color: white;
+    border: 1px solid #e6ecf2;
+}

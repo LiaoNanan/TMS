@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>录入课程信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layui-v2.6.8/css/layui.css}" media="all">
+    <script th:src="@{/layui-v2.6.8/layui.js}"></script>
+    <script th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+
+</head>
+<body>
+<div style="margin: 5rem 35rem;">
+    <div class="layui-card" style="width: 550px;">
+        <div class="layui-card-body" style="border: 2px solid">
+            <form class="layui-form" action="" id="addclass">
+                <div class="layui-form-item">
+                    <label for="kch" class="layui-form-label">课程号：</label>
+                    <div class="layui-input-block">
+                        <input name="cno" type="text" class="layui-input" id="kch" placeholder="课程号"
+                               style="width: 400px" value="">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="kcmc" class="layui-form-label">课程名称：</label>
+                    <div class="layui-input-block">
+                        <input name="cname" type="text" class="layui-input" id="kcmc" placeholder="课程名称"
+                               style="width: 400px">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="kclx" class="layui-form-label">课程类型：</label>
+                    <div class="layui-input-block" style="width: 400px">
+                        <select name="ctype" id="kclx" placeholder="课程类型" style="width: auto" lay-filter="leixing">
+                            <option value="0">必修课</option>
+                            <option value="1">选修课</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="xs" class="layui-form-label">学时：</label>
+                    <div class="layui-input-block">
+                        <input name="ctime" type="text" class="layui-input" id="xs" placeholder="学时"
+                               style="width: 400px">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="xf" class="layui-form-label">学分：</label>
+                    <div class="layui-input-block">
+                        <input name="credit" type="text" class="layui-input" id="xf" placeholder="学分"
+                               style="width: 400px">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="skzy" class="layui-form-label">上课专业：</label>
+                    <div class="layui-input-block">
+                        <input name="major" type="text" class="layui-input" id="skzy" placeholder="上课专业"
+                               style="width: 400px">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="skbj" class="layui-form-label">上课班级：</label>
+                    <div class="layui-input-block">
+                        <input name="major" type="text" class="layui-input" id="skbj" placeholder="上课专业"
+                               style="width: 400px">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="rkls" class="layui-form-label">任课教师：</label>
+                    <div class="layui-input-block">
+                        <input name="teacher" type="text" class="layui-input" id="rkls" placeholder="任课教师"
+                               style="width: 400px">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button lay-submit="" type="submit" class="layui-btn" lay-filter="demo1" id="sure">确定</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:inline="none">
+    layui.use('form', function () {
+        var form = layui.form
+            , layer = layui.layer;
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            var res = data.field
+            layer.confirm('确定提交吗？', {
+                title: '确认'
+                , btn: ['确认', '取消']
+                , btn1: function (index, layero) {
+
+                    if ($('#kclx').val() != "" &&
+                        $('#kch').val() != "" &&
+                        $('#kcmc').val() != "" &&
+                        $('#xs').val() != "" &&
+                        $('#xf').val() != "" &&
+                        $('#skbj').val() != "" &&
+                        $('#skzy').val() != "" &&
+                        $('#rkls').val() != "") {
+                        $.ajax({
+                            url: '/academic/judgeCourse',
+                            data: {
+                                cno: $('#kch').val(),
+                                tname: $('#rkls').val(),
+                                className: $('#skbj').val(),
+                                mname: $('#skzy').val()
+                            },
+                            success: function (data) {
+                                if (data == "true") {
+                                    $.ajax({
+                                        url: '/academic/getId',
+                                        data: {
+                                            cno: $('#kch').val(),
+                                            tname: $('#rkls').val(),
+                                            className: $('#skbj').val(),
+                                            mname: $('#skzy').val()
+                                        },
+                                        success: function (data) {
+                                            if (data == "true") {
+                                                $.ajax({
+                                                    url: '/academic/insertCourse',
+                                                    data: {
+                                                        ctype: $('#kclx').val(),
+                                                        cno: $('#kch').val(),
+                                                        cname: $('#kcmc').val(),
+                                                        period: $('#xs').val(),
+                                                        credits: $('#xf').val(),
+                                                        className: $('#skbj').val(),
+                                                        mname: $('#skzy').val(),
+                                                        tname: $('#rkls').val(),
+                                                    },
+                                                    success: function (data) {
+                                                        if (data == "true") {
+                                                            layer.alert("编辑成功")
+                                                            $("#addclass")[0].reset();
+                                                            layer.close(index);
+                                                        } else {
+                                                            layer.alert("已有相关课程")
+                                                        }
+
+                                                    }
+                                                })
+                                            } else {
+                                                layer.alert("无相关班级或老师")
+                                            }
+                                        }
+                                    })
+                                } else {
+                                    layer.alert("已有课程号已存在")
+                                }
+
+                            }
+
+
+                        })
+                    } else {
+                        layer.alert("不能有空数据")
+                    }
+                }
+            })
+            return false;
+        });
+    })
+</script>
+</body>
+</html>

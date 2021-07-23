@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>教师信息表</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui-v2.6.8/css/layui.css}"/>
+    <script th:src="@{/layui-v2.6.8/layui.js}" type="text/javascript" charset="UTF-8"></script>
+    <style>
+        tr {
+            text-align: center;
+            height: 60px;
+        }
+
+        td {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<table border="1px" cellspacing="0" cellpadding="0" style="margin: 80px auto; border-collapse: inherit;">
+    <tr>
+        <th colspan="4">教师信息</th>
+    </tr>
+    <tr>
+        <td>姓名：</td>
+        <td>[[${session.user.tname}]]</td>
+        <td rowspan="3">
+            <img th:src="@{/image/users.jpg}" style="width: 160px">
+        </td>
+    </tr>
+    <tr>
+        <td>性别：</td>
+        <td th:text="${session.user.tsex}==1?男:女"></td>
+    </tr>
+    <tr>
+        <td>政治面貌：</td>
+        <td>[[${session.user.politic}]]</td>
+    </tr>
+    <tr>
+        <td>工号：</td>
+        <td colspan="2">[[${session.user.tid}]]</td>
+    </tr>
+    <tr>
+        <td>工资：</td>
+        <td colspan="2">[[${session.user.tsalary}]]</td>
+    </tr>
+    <tr>
+        <td>学位：</td>
+        <td colspan="2">[[${session.user.degree}]]</td>
+    </tr>
+    <tr>
+        <td>职称：</td>
+        <td colspan="2">[[${session.user.rank}]]</td>
+    </tr>
+    <tr>
+        <td>教授课程：</td>
+        <td colspan="2">
+      <span th:each="cname:${cnames}">
+        [[${cname}]]
+      </span>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

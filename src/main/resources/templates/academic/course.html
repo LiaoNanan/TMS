@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>教务人员录入必修课</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layui-v2.6.8/css/layui.css}" media="all">
+    <script th:src="@{/layui-v2.6.8/layui.js}"></script>
+    <script th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <style>
+        .layui-table th, .layui-table td {
+            /*表头内容居中显示*/
+            text-align: center;
+
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 80px auto; padding: 0 118px">
+
+    <table id="compulsory" lay-filter="test"></table>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs edit-btn" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</div>
+<script th:inline="none">
+    var arr;
+    layui.use('table', function () {
+        var table = layui.table;
+        var $ = layui.$;
+
+        //第一个实例
+        table.render({
+            elem: '#compulsory'
+            , height: 'full-360'
+            // ,cellMinWidth: 200
+            , url: '/academic/getCourse' //数据接口
+            , cols: [[ //表头
+                {field: 'cno', title: '课程号', id: 'kch1', width: 100, sort: true}
+                , {field: 'cname', title: '课程名称', id: 'kcmc1'}
+                , {field: 'ctype', title: '课程类型', width: 100}
+                , {field: 'period', title: '学时', id: 'xs1', width: 100, sort: true}
+                , {field: 'credits', title: '学分', id: 'xf1', width: 100, sort: true}
+                , {field: 'mname', title: '上课专业', id: 'skzy1', width: 200}
+                , {field: 'className', title: '上课班级', id: 'skbj1', width: 150}
+                , {field: 'tid', title: '工号', id: 'tid', width: 200}
+                , {field: 'tname', title: '任课老师', id: 'rkls1', width: 150}
+                , {fixed: 'right', title: '管理', width: 150, align: 'center', toolbar: '#barDemo'}
+            ]]
+            , page: true
+            , limits: [10, 20, 30]  //一页选择显示3,5或10条数据
+            , limit: 10  //一页显示10条数据
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                var result;
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+        table.on('tool(test)', function (obj) {
+            var children = obj.tr[0].childNodes;
+            var data = obj.data;
+            var $ = layui.$
+
+            if (obj.event === 'edit') {
+
+                $.ajax({
+                    url: '/academic/getCourseOne',
+                    data: {
+                        cno: data.cno,
+                        tid: data.tid,
+                        className: data.className,
+                        mname: data.mname,
+                        ctype: data.ctype
+                    }
+                })
+                layer.open({
+                    type: 1,
+                    shade: 0.1,//取消遮罩
+                    area: ['400px', '450px'],
+                    scrollbar: false,
+                    // shadeClose: true, //点击遮罩关闭
+                    content:
+                    <!--修改课程信息-->
+                        '<div class="modal addfade modal-edit" id="addmodal">\n' +
+                        '  <div class="modal-dialog">\n' +
+                        '    <div class="modal-content">\n' +
+                        '      <div class="modal-body">\n' +
+                        '        <form class="layui-form" action="">\n' +
+                        '          <div class="layui-form-item">\n' +
+                        '            <label for="kch" class="layui-form-label">课程号：</label>\n' +
+                        '            <div class="layui-input-block">\n' +
+                        '              <input type="text" class="layui-input" id="kch"  style="width: auto" value="">\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '          <div class="layui-form-item" >\n' +
+                        '            <label for="kcmc" class="layui-form-label">课程名称：</label>\n' +
+                        '            <div class="layui-input-block">\n' +
+                        '              <input type="text" class="layui-input" id="kcmc" placeholder="课程名称" style="width: auto">\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '          <div class="layui-form-item">\n' +
+                        '            <label for="kclx" class="layui-form-label">课程类型：</label>\n' +
+                        '            <div class="layui-input-block">\n' +
+                        '              <input type="text" class="layui-input" id="kclx" placeholder="课程类型" style="width: auto">\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '          <div class="layui-form-item" >\n' +
+                        '            <label for="xs" class="layui-form-label">学时：</label>\n' +
+                        '            <div class="layui-input-block">\n' +
+                        '              <input type="text" class="layui-input" id="xs" placeholder="学时" style="width: auto">\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '          <div class="layui-form-item" >\n' +
+                        '            <label for="xf" class="layui-form-label">学分：</label>\n' +
+                        '            <div class="layui-input-block">\n' +
+                        '              <input type="text" class="layui-input" id="xf" placeholder="学分" style="width: auto">\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '          <div class="layui-form-item" >\n' +
+                        '            <label for="skzy" class="layui-form-label">上课专业：</label>\n' +
+                        '            <div class="layui-input-block">\n' +
+                        '              <input type="text" class="layui-input" id="skzy" placeholder="上课专业" style="width: auto">\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '          <div class="layui-form-item" >\n' +
+                        '            <label for="skbj" class="layui-form-label">上课班级：</label>\n' +
+                        '            <div class="layui-input-block">\n' +
+                        '              <input type="text" class="layui-input" id="skbj" placeholder="上课班级" style="width: auto">\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '             <div class="layui-form-item" >\n' +
+                        '           <label for="tid" class="layui-form-label">工号：</label>\n' +
+                        '           <div class="layui-input-block">\n' +
+                        '             <input type="text" class="layui-input" id="tid" placeholder="工号" style="width: auto">\n' +
+                        '           </div>\n' +
+                        '           </div>\n' +
+                        '          <div class="layui-form-item" >\n' +
+                        '           <label for="rkls" class="layui-form-label">任课老师：</label>\n' +
+                        '           <div class="layui-input-block">\n' +
+                        '             <input type="text" class="layui-input" id="rkls" placeholder="任课老师" style="width: auto">\n' +
+                        '           </div>\n' +
+                        '           </div>\n' +
+                        '       </form>\n' +
+                        '      </div>\n' +
+                        '    </div>\n' +
+                        '  </div>\n' +
+                        '  </div>\n'
+                    , btn: ['确定']
+                    , btnAlign: 'c'
+                    , btn1: function (index, layero) {
+                        //按钮【按钮一】的回调
+
+                        var a = {     //获取编辑的值
+                            ctype: $('#kclx').val(),
+                            cno: $('#kch').val(),
+                            cname: $('#kcmc').val(),
+                            period: $('#xs').val(),
+                            credits: $('#xf').val(),
+                            className: $('#skbj').val(),
+                            mname: $('#skzy').val(),
+                            tname: $('#rkls').val(),
+                            tid: $('#tid').val(),
+                        };
+                        $.ajax({
+                            url: '/academic/upCourse',
+                            data: {
+                                ctype: $('#kclx').val(),
+                                cno: $('#kch').val(),
+                                cname: $('#kcmc').val(),
+                                period: $('#xs').val(),
+                                credits: $('#xf').val(),
+                                className: $('#skbj').val(),
+                                mname: $('#skzy').val(),
+                                tname: $('#rkls').val(),
+                                tid: $('#tid').val(),
+                            },
+                            success: function (data) {
+
+                                if (data == "true") {
+                                    layer.confirm('编辑成功', {
+                                        btn: ['确定']
+                                    }, function (index) {
+                                        layui.table.reload('compulsory', {
+                                            where: {}
+                                        });
+                                        layer.close(index)
+                                    });
+                                    layer.close(index);
+                                } else {
+                                    layer.alert("信息冲突，请修改")
+                                }
+                            }
+
+                        })
+                    }
+
+                });
+
+                $('#kch').val(children[0].childNodes[0].textContent);
+                $('#kcmc').val(children[1].childNodes[0].textContent);
+                $('#kclx').val(children[2].childNodes[0].textContent);
+                $('#xs').val(children[3].childNodes[0].textContent);
+                $('#xf').val(children[4].childNodes[0].textContent);
+                $('#skzy').val(children[5].childNodes[0].textContent);
+                $('#skbj').val(children[6].childNodes[0].textContent);
+                $('#tid').val(children[7].childNodes[0].textContent);
+                $('#rkls').val(children[8].childNodes[0].textContent);
+
+            }
+
+            if (obj.event === 'del') {
+                layer.confirm('确定删除吗？', function (index) {
+                    obj.del();
+                    $.ajax({
+                        url: '/academic/delCourse',
+                        data: {
+                            cno: data.cno,
+                            tid: data.tid,
+                            className: data.className,
+                            mname: data.mname,
+                            ctype: data.ctype
+                        }
+                    })
+                    layui.table.reload('compulsory', {
+                        where: {}
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

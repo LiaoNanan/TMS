@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.system.mapper.AcademicMapper">
+    <select id="getCourse" resultType="java.util.HashMap">
+        #         select  distinct if(is_elective=1,'选修课','必修课') as ctype,tname,cno,cname,period,credits,class_name as className,mname
+        select course.*, if(is_elective=1,'选修课','必修课') as ctype, teacher.*, mname, class_name as className
+        from course,teacher,class,major
+        where  (course.tid=teacher.tid and class.class_id=course.class_id and class.mid=course.mid and major.mid=course.mid)
+        UNION
+        select course.*,if(is_elective=1,'选修课','必修课') as ctype,teacher.*,
+               '选修' as mname, '选修班级' as className from course,teacher where course.class_id=101
+                                                                        and course.mid is null and course.tid= teacher.tid
+    </select>
+    <update id="upCourse">
+        update course set class_id=#{classId},mid=#{mid}
+                        ,period=#{period},credits=#{credits},tid=#{tid}
+                        ,cname=#{cname},is_elective=#{is_elective},cno=#{cno}
+        where cno=#{oldCno} and class_id=#{oldClassId} and tid=#{oldTid}
+    </update>
+    <delete id="delCourse">
+        delete from course
+        where (tid=#{tid} and cno=#{cno} and class_id=#{classId}) or (class_id='101' and cno=#{cno} and tid=#{tid})
+    </delete>
+    <select id="getCourseOne" resultType="java.util.HashMap">
+        select cno, cname, tid, tname, period, credits, mid, mname, class_id as classId, class_name, is_elective from student_course
+        where cno=#{cno} and tname=#{tname} and class_name=#{className};
+    </select>
+    <select id="getName" resultType="java.util.HashMap">
+        select distinct tname,course.cname from course,teacher
+        where  course.cno=#{cno} and teacher.tid=#{tid}
+    </select>
+    <select id="getId" resultType="java.util.HashMap">
+        select distinct major.mid,class.class_id as classId from major,class,teacher
+        where mname=#{mname} and class_name=#{className} and major.mid=class.mid
+    </select>
+    <select id="judgeStu" resultType="java.lang.Boolean">
+        select count(*) from student
+        where student.sid=#{sid}
+    </select>
+    <insert id="insertStu">
+        insert into student
+        values (#{sid},#{sname},#{ssex},#{mid},#{classId},#{birthday},#{idCard},#{origin},#{politic})
+    </insert>
+    <insert id="insertCourse">
+        insert into course
+        values (#{cno},#{tid},#{cname},#{period},#{credits},#{mid},#{classId},#{is_elective})
+    </insert>
+    <select id="getMid" resultType="java.util.HashMap">
+        select major.mid,class.class_id,tid from class,major,teacher
+        where class.class_name=#{className} and major.mname=#{mname} and class.mid=major.mid and teacher.tname=#{tname}
+    </select>
+    <select id="toRelease" resultType="java.util.HashMap">
+        select course.cno, course.tid, cname, course.mid, course.class_id, if(is_release=1,'是','否') as
+            is_release,class_name,tname,mname
+        from course,grade g1,teacher,class,major
+        where course.cno=g1.cno and course.tid=g1.tid  and course.tid=teacher.tid and class.mid=course.mid
+          and class.class_id=course.class_id and major.mid=course.mid and g1.sid
+          and  not exists(
+                select * from course
+                where course.cno=g1.cno and course.tid=g1.tid and g1.grade is null
+            )
+        UNION
+        select course.cno, course.tid, cname, course.mid, course.class_id, if(g1.is_release=1,'是','否') as
+                         is_release,
+               '选修班级' as class_name,tname,'选修' as mname from course,teacher,grade g1 where course.class_id=101
+                                                                                         and course.mid is null and course.tid= teacher.tid and course.cno=g1.cno and g1.tid=teacher.tid and not exists(
+                    select * from course
+                    where course.cno=g1.cno and course.tid=g1.tid and g1.grade is null
+                )
+    </select>
+    <select id="getTid" resultType="java.util.HashMap">
+        select  distinct course.tid,class_id as classId,course.mid,cno from teacher,course,major
+        where tname=#{tname} and course.tid=teacher.tid
+          and course.cno=#{cno} and major.mname=#{mname} and major.mid=course.mid
+    </select>
+    <update id="release">
+        update grade set is_release=1
+        where grade.cno=#{cno} and grade.tid=#{tid} and sid in (
+            select sid from student,course
+            where student.class_id=course.class_id and student.mid=course.mid
+              and course.cno=#{cno} and course.class_id=#{classId}
+              and course.mid=#{mid}
+        )
+    </update>
+    <update id="releaseChoose">
+        update grade set is_release=1
+        where grade.cno=#{cno} and grade.tid=#{tid} and sid in (
+            select sid from choose_course
+            where  choose_course.cno=#{cno} and choose_course.tid=#{tid}
+        )
+    </update>
+    <select id="getStudent" resultType="java.util.HashMap">
+        select  course.cno,cname,mname,class_name, sname,grade,tname,student.sid
+        from course,class,major,student,grade,teacher
+        where  major.mid=course.mid
+          and course.tid=teacher.tid
+          and course.class_id=class.class_id and course.mid=class.mid
+          and student.class_id=course.class_id and student.mid=course.mid
+          and grade.tid=course.tid and grade.cno=course.cno and grade.sid=student.sid
+          and course.tid=#{tid} and course.mid=#{mid} and course.class_id=#{class_id} and course.cno=#{cno}
+    </select>
+    <select id="getChooseStu" resultType="java.util.HashMap">
+        select course.cno,cname,mname,class_name, sname,grade,tname,student.sid
+        from choose_course,student,grade,course,major,class,teacher
+        where choose_course.sid=student.sid and choose_course.cno=course.cno
+          and student.class_id=class.class_id and student.mid=class.mid
+          and grade.tid=course.tid and grade.cno=course.cno and grade.sid=student.sid
+          and major.mid=class.mid and choose_course.tid=teacher.tid and course.tid=teacher.tid
+          and course.tid=#{tid}  and course.class_id=#{class_id} and course.cno=#{cno};
+    </select>
+    <update id="changeGrade">
+        update grade set grade=#{grade}
+        where tid=#{tid} and grade.sid=#{sid} and grade.cno=#{cno}
+    </update>
+</mapper>

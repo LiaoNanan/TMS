@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.system.mapper.PersonnelMapper">
+    <insert id="entryTeacher">
+        insert into teacher values(#{tid},#{tname},#{tsex},#{politic},#{degree},#{rank},#{tsalary})
+    </insert>
+
+    <insert id="entryAcademic">
+        insert into academic values(#{acid},#{acname},#{acsex},#{acsalary})
+    </insert>
+
+    <select id="getAcademic" resultType="Academic">
+        select *,if(acsex=1,'男','女') as acSexs from academic
+    </select>
+
+    <update id="editAcademic">
+        update academic set acid = #{acid},acname = #{acname},acsex = #{acsex},acsalary = #{acsalary}
+        where acid = #{oldAcid}
+    </update>
+
+    <delete id="delAcademic">
+        delete from academic where acid = #{acid}
+    </delete>
+
+    <select id="getTeacher" resultType="Teacher">
+        select *,if(tsex=1,'男','女') as tSexs from teacher
+    </select>
+
+    <update id="editTeacher">
+        update teacher set tid = #{tid},tname = #{tname},tsex = #{tsex},politic = #{politic},degree = #{degree},teacher.rank = #{rank},tsalary = #{tsalary}
+        where tid = #{oldTid}
+    </update>
+
+    <delete id="delTeacher">
+        delete from teacher where tid = #{tid}
+    </delete>
+</mapper>

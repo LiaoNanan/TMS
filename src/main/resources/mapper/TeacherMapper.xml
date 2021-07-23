@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.system.mapper.TeacherMapper">
+    <select id="getCourse" resultType="Course">
+        select course.*, mname, class_name from course,class,major where course.class_id=class.class_id and course.mid=class.mid and course.mid = major.mid and course.tid= #{tid}
+        UNION
+        select course.*, '选修' as mname, '选修班级' as class_name from course where course.class_id=101 and course.mid is null and course.tid=#{tid}
+    </select>
+
+    <select id="getGrade" resultType="java.util.HashMap">
+        select  course.cno,cname,mname,class_name className, sname, student.sid,grade
+        from course,class,major,student,grade
+        where major.mid=course.mid and course.class_id=class.class_id and course.mid=class.mid
+          and student.class_id=course.class_id and student.mid=course.mid
+          and grade.tid=course.tid and grade.cno=course.cno and grade.sid=student.sid and grade.is_release = 1
+          and grade.sid = CASE WHEN #{tid} is null THEN grade.sid else #{tid} end
+        union
+        select  course.cno,cname,mname,class_name className, sname, student.sid,grade
+        from course,class,major,student,grade
+        where student.class_id=class.class_id and student.mid=class.mid and class.mid = major.mid
+          and grade.tid=course.tid and grade.cno=course.cno and grade.sid=student.sid and grade.is_release = 1
+          and course.class_id= 101 and course.mid is null
+          and grade.sid = CASE WHEN #{tid} is null THEN grade.sid else #{tid} end
+    </select>
+
+    <select id="getStudent" resultType="Student">
+        select * from course,student,grade,class,major
+        where course.tid=#{tid} and student.class_id=course.class_id
+          and course.cno=#{cno}
+          and student.mid=course.mid and student.mid = major.mid
+          and grade.tid=course.tid and grade.cno=course.cno and grade.sid=student.sid
+          and is_release=0 and class.class_id=student.class_id and class.mid=student.mid;
+    </select>
+    <update id="upGrade">
+        update grade set grade=#{grade}
+        where sid=#{sid} and cno=#{cno} and tid=#{tid}
+    </update>
+</mapper>

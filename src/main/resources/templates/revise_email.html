@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>邮箱重置-安全中心</title>
+    <link rel="stylesheet" th:href="@{/layui-v2.6.8/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/css/revise.css}">
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/layui-v2.6.8/layui.js}"></script>
+</head>
+<body>
+<div class="head">
+    <img th:src="@{/image/revise_bg.png}" style="width: 100%;height: 180px">
+    <div class="logon">
+        <img th:src="@{/image/Logo.png}" style="height: 65px">
+        <div  class="title">邮箱重置</div>
+    </div>
+</div>
+<div class="main">
+    <div class="steps-icon step-selected" id="icon-1">
+        <span id="text-1">1</span>
+    </div>
+    <div class="step-label" style="color: black;font-weight:bolder;" id="label-1">确认账号</div>
+    <div class="link" id="link-1"> </div>
+    <div class="steps-icon" id="icon-2">
+        <span id="text-2">2</span>
+    </div>
+    <div class="step-label" id="label-2">验证身份</div>
+    <div class="link" id="link-2"> </div>
+    <div class="steps-icon" id="icon-3">
+        <span id="text-3">3</span>
+    </div>
+    <div class="step-label" id="label-3">邮箱重置</div><br>
+    <div id="first" >
+        <div class="input-lable" >账号：</div>
+        <input id="id" class="common-input" placeholder="请输入账号">
+        <div class="error-msg" id="error-msg"></div>
+        <input value="下一步" id="next1" type="button" class="common-input step-selected" style="width: 530px">
+    </div>
+    <div id="second" style="display:none;">
+        <div class="input-lable" style="">验证方式：</div>
+        <form action="" class="layui-form">
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <select id="select" lay-filter="aihao" name="interest">
+                        <option selected value="" onclick="change()"></option>
+                        <option value="1" >密码验证</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+            <input class="common-input" id="before-mail" type="button" value="上一步" style="background-color: white;margin-top: 50px">
+        <div id="mail-block" style="display: none">
+            <div class="input-lable">验证：</div>
+            <input id="pwd" class="common-input" type="password" placeholder="请输入密码">
+            <div class="error-msg" id="error-msg-2"></div>
+            <input value="上一步" id="before-1" type="button" class="common-before">
+            <input value="下一步" id="next-2" type="button" class="common-next step-selected">
+        </div>
+
+    </div>
+    <div id="third" style="display: none">
+        <div class="input-lable">邮箱绑定：</div>
+        <input  class="common-input" id="email" placeholder="请输入邮箱">
+        <div class="error-msg" id="error-msg-3"></div>
+        <input id="code" class="common-input input-mail" placeholder="请输入验证码">
+        <input id="sendCode" class="sendCode" type="button" value="发送动态码" disabled>
+        <div class="error-msg" id="error-msg-4"></div>
+        <input value="上一步" id="before-2" type="button" class="common-before">
+        <input value="下一步" id="next-3" type="button" class="common-next step-selected">
+    </div>
+    <div id="success" style="color:#5ca9e7;margin: 50px auto;width: 300px;text-align: center;display: none">
+        <img th:src="@{/image/success.png}" style="height: 40px">
+        <div style="margin:30px 0px">邮箱重置成功</div>
+    </div>
+
+
+
+</div>
+</body>
+<script type="text/javascript" th:src="@{/js/revise_email.js}"></script>
+</html>

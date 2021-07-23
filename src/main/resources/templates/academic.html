@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>JMU-教务管理系统</title>
+    <link rel="stylesheet" th:href="@{/layui-v2.6.8/css/layui.css}">
+
+    <style>
+        .icon {
+            width: 1em;
+            height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body style="margin:0; padding:0;">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header" style="background-color: #2468B1">
+        <div class="layui-logo layui-hide-xs" style="margin: 0 20px 0 20px">
+            <img th:src="@{/image/Logo.png}">
+        </div>
+        <div class="layui-nav layui-layout-left" style="margin-left: 20px;">
+            <span style="display: inline-block;color:#fff;font-size:26px;font-weight:bold;line-height:60px;letter-spacing:3px;font-family:黑体;">教务管理系统</span>
+        </div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-hide-xs" id="one"><a href=""><i
+                    class="layui-icon layui-icon-home"></i>首页</a></li>
+            <li class="layui-nav-item layui-hide-xs"><a th:href="@{/exit}"><i
+                    class="layui-icon layui-icon-slider">切换用户</i></a></li>
+            <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                <a href="javascript:;">
+                    <img th:src="@{/image/users.jpg}" class="layui-nav-img">
+                    [[${session.user.acid}]]
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a th:href="@{/revise_password}" target="_blank">更改密码</a></dd>
+                    <dd><a th:href="@{/revise_email}" target="_blank">更改邮箱</a></dd>
+                    <dd><a th:href="@{/exit}">退出系统</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black" style="margin-top: 10px; background-color: #3E688E!important;">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test" style="background-color: #2170BB;">
+                <li style="height: 45px;width: 200px">
+                    <a style="pointer-events: none; color: #FFF;line-height: 50px;padding-left: 17px;font-size: 20px">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-caidan"></use>
+                        </svg>
+                        系统菜单
+                    </a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-kcb"></use>
+                        </svg>
+                        课程管理
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd style="padding-left: 15px" id="two"><a href="javascript:;" onclick="showCourse()">查看课程</a>
+                        </dd>
+                        <dd style="padding-left: 15px" id="three"><a href="javascript:;" onclick="addClass()">录入课程</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item" id="four">
+                    <a href="javascript:;" onclick="addStudent()">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-luru"></use>
+                        </svg>
+                        录入学生信息
+                    </a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;" onclick="releaseCourse()">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-chengjidan"></use>
+                        </svg>
+                        学生成绩管理
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body" style="margin: 10px 15px 15px 15px;">
+        <!-- 内容主体区域 -->
+        <iframe style="width: 99%; height: 99%; box-shadow: 1px 1px 5px #909090;" th:src="@{/home}" id="myiframe"
+                scrolling="no" frameborder="0">
+
+        </iframe>
+
+    </div>
+
+    <div class="layui-footer" style="background-color: #E3E3E3;">
+        <!-- 底部固定区域 -->
+        <div class="layui-layout-right">
+            <span style="margin-right: 30px">用户名： [[${session.user.acname}]]</span>
+            <span style="margin-right: 30px">登录时间： [[${#dates.format(new java.util.Date().getTime(),'yyyy-MM-dd HH:mm')}]]</span>
+        </div>
+    </div>
+</div>
+<script th:src="@{/layui-v2.6.8/layui.js}"></script>
+<script th:src="@{/js/iconfont.js}"></script>
+<script>
+    var bef1 = null;
+    var bef2 = null;
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    function showCourse() {
+        if (bef1 != null) {
+            bef1.classList.remove("layui-this")
+        }
+        bef2 = document.getElementById("two")
+
+        document.getElementById("myiframe").src = "academic/course";
+    }
+
+    function addClass() {
+        if (bef1 != null) {
+            bef1.classList.remove("layui-this")
+        }
+        bef2 = document.getElementById("three")
+
+        document.getElementById("myiframe").src = "academic/add-class";
+    }
+
+    function addStudent() {
+        if (bef1 != null) {
+            bef1.classList.remove("layui-this")
+        }
+        bef2 = document.getElementById("four")
+
+        document.getElementById("myiframe").src = "academic/add-student";
+    }
+
+    function releaseCourse() {
+        if (bef1 != null) {
+            bef1.classList.remove("layui-this")
+        }
+        bef2 = document.getElementById("five")
+
+        document.getElementById("myiframe").src = "academic/release-course";
+    }
+
+</script>
+</body>
+</html>

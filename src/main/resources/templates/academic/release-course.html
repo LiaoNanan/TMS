@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>课程成绩管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layui-v2.6.8/css/layui.css}" media="all">
+
+    <style>
+        .layui-table th, .layui-table td {
+            /*表头内容居中显示*/
+            text-align: center;
+
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 80px auto; padding: 0 118px">
+    <table id="tea-grade" lay-filter="test"></table>
+</div>
+
+<script th:src="@{/layui-v2.6.8/layui.js}"></script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="into" id="into" href="edit-and-release">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="release" id="release">发布</a>
+</script>
+<script th:inline="none">
+    layui.use('table', function () {
+        var $ = layui.$;
+        var table = layui.table;
+
+        table.render({
+            elem: '#tea-grade'
+            , height: 'full-360'
+            , cellMinWidth: 200
+            , url: '/academic/toRelease' //数据接口
+            , cols: [[ //表头
+
+                {field: 'cno', title: '课程号', width: 200, sort: true,}
+                , {field: 'cname', title: '课程名称'}
+                , {field: 'tname', title: '任课老师', width: 200}
+                , {field: 'mname', title: '专业', width: 200}
+                , {field: 'class_name', title: '班级', width: 200}
+                , {field: 'is_release', title: '发布状态', width: 200}
+                , {fixed: 'right', title: '管理', width: 200, align: 'center', toolbar: '#barDemo'}
+            ]]
+            , page: true
+            , limits: [10, 20, 30]  //一页选择显示3,5或10条数据
+            , limit: 10  //一页显示10条数据
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                var result;
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+
+        //监听工具条
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'release') {
+                if (data.is_release === '是') {
+                    layer.alert('该课程已发布');
+                } else {
+                    layer.confirm('确定发布吗？',
+                        {
+                            btn: ['确定', '取消']
+                            , btn1: function (index, layero) {
+                                $.ajax({
+                                    url: "/academic/release",
+                                    data: {
+                                        cno: data.cno,
+                                        classId: data.classId,
+                                        tid: data.tid,
+                                        mid: data.mid,
+                                        classId: data.class_id
+                                    }
+                                })
+                                var children = obj.tr[0].childNodes;
+                                console.log(children[4])
+                                children[5].childNodes[0].textContent = '是'
+                                layer.alert('发布成功');
+                                console.log(data);
+                                layer.close(index)
+                            }
+                        })
+                }
+            }
+            if (obj.event === 'into') {
+                sessionStorage.setItem("info", JSON.stringify(data));
+            }
+        });
+    });
+</script>
+</body>
+</html>

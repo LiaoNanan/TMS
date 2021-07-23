@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>查看教师信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layui-v2.6.8/css/layui.css}" media="all">
+
+
+    <style>
+        tr {
+            text-align: center;
+            height: 60px;
+        }
+
+        td {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 80px 543px;">
+    <div class="layui-form" style="margin-left: 40px;">
+        <div class="layui-form-item">
+
+            <div class="layui-input-inline">
+                <select name="teacherName" lay-verify="required" lay-search="" id="teacherName" lay-filter="showTid">
+                    <option value="">请选择教师姓名</option>
+                </select>
+            </div>
+
+            <div class="layui-input-inline">
+                <select name="teacherId" id="tid">
+                    <option value="">请选择教师工号</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" onclick="searchTeacher()"
+                    style="margin-top: -87px;margin-left: 340px;">查询
+            </button>
+        </div>
+
+    </div>
+
+    <table border="1px" cellspacing="0" cellpadding="0" style="border-collapse: separate;">
+        <tr>
+            <th colspan="4" style="font-size: 20px">教师信息</th>
+        </tr>
+        <tr>
+            <td>姓名：</td>
+            <td id="tname"></td>
+            <td rowspan="3">
+                <img th:src="@{/image/users.jpg}" style="width: 160px">
+            </td>
+        </tr>
+        <tr>
+            <td>性别：</td>
+            <td id="tsex"></td>
+        </tr>
+        <tr>
+            <td>政治面貌：</td>
+            <td id="politic"></td>
+        </tr>
+        <tr>
+            <td>学位：</td>
+            <td colspan="2" id="degree"></td>
+        </tr>
+        <tr>
+            <td>职称：</td>
+            <td colspan="2" id="rank"></td>
+        </tr>
+        <tr>
+            <td>教授课程：</td>
+            <td colspan="2" id="course">
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<script th:src="@{/layui-v2.6.8/layui.js}" charset="UTF-8"></script>
+<script>
+
+
+    layui.use('form', function () {
+        $ = layui.jquery;
+        var form = layui.form;
+
+        $(function () {
+            $.getJSON('/student/getTeacherName', function (data) {
+                let optionTname = '<option value="">' + '请选择教师姓名' + '</option>';
+                $.each(data.data, function (i, item) {
+                    optionTname += '<option value="' + item.tname + '">' + item.tname + '</option>';
+                });
+                $("#teacherName").html(optionTname);
+                form.render('select');
+            })
+        });
+
+        form.on('select(showTid)', function (data) {
+            $.getJSON('/student/getTeacherTid', {"tname": $("#teacherName").val()}, function (data) {
+                let optionTid = '<option value="">' + '请选择教师工号' + '</option>';
+
+                $.each(data.data, function (i, item) {
+                    optionTid += '<option value="' + item.tid + '">' + item.tid + '</option>';
+
+                });
+
+                $("#tid").html(optionTid);
+
+                form.render('select');
+
+            });
+
+
+        });
+
+    });
+
+    function searchTeacher() {
+        if ($("#tid").val() != null) {
+            // console.log(1);
+            $.ajax({
+                url: '/student/searchTeacher',
+                data: {
+                    'tid': $("#tid").val()
+                },
+
+                success: function (data) {
+                    let JsonData = eval('(' + data + ')');
+                    document.getElementById("tname").innerHTML = JsonData.data[0].tname;
+                    if (JsonData.data[0].tsex == 1) {
+                        document.getElementById("tsex").innerHTML = '男';
+                    } else {
+                        document.getElementById("tsex").innerHTML = '女';
+                    }
+                    document.getElementById("politic").innerHTML = JsonData.data[0].politic;
+                    document.getElementById("degree").innerHTML = JsonData.data[0].degree;
+                    document.getElementById("rank").innerHTML = JsonData.data[0].rank;
+                    document.getElementById("course").innerHTML = JsonData.data[0].course;
+                },
+                error: function (data) {
+
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

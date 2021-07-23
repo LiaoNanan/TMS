@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <title>学生信息表</title>
+
+    <style>
+        tr {
+            text-align: center;
+            height: 60px;
+        }
+
+        td {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<table border="1px" cellspacing="0" cellpadding="0" style="margin: 80px auto;">
+    <tr>
+        <th colspan="6">学生个人信息</th>
+    </tr>
+    <tr>
+        <td>学号：</td>
+        <td>[[${session.user.sid}]]</td>
+        <td>姓名：</td>
+        <td>[[${session.user.sname}]]</td>
+        <td rowspan="3">
+            <img th:src="@{/image/users.jpg}" style="width: 160px">
+        </td>
+
+    </tr>
+    <tr>
+        <td>年龄：</td>
+        <td>[[${info.old}]]</td>
+        <td>性别：</td>
+        <td th:text="${info.ssex}==1?男:女"></td>
+    </tr>
+    <tr>
+        <td>生源省份：</td>
+        <td>[[${info.origin}]]</td>
+        <td>政治面貌：</td>
+        <td>[[${info.politic}]]</td>
+    </tr>
+    <tr>
+        <td>身份证号：</td>
+        <td colspan="4">[[${info.idCard}]]</td>
+    <tr>
+        <td>出生日期：</td>
+        <td colspan="4">[[${#dates.format(info.birthday,'yyyy-MM-dd')}]]</td>
+    </tr>
+    <tr>
+        <td>专业：</td>
+        <td colspan="4">[[${info.mname}]]</td>
+    </tr>
+    <tr>
+        <td>班级：</td>
+        <td colspan="4">[[${session.user.className}]]</td>
+    </tr>
+    <tr>
+        <td>邮箱：</td>
+        <td colspan="4">[[${session.user.email}]]</td>
+    </tr>
+</table>
+
+</body>
+</html>

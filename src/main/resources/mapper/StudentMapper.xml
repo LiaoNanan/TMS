@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.system.mapper.StudentMappper">
+    <select id="getInfo" resultType="StudentBaseInfo">
+        select * from student,class,major
+        where student.mid=major.mid
+          and student.mid=class.mid
+          and student.class_id=class.class_id
+          and sid=#{sid}
+          and major.mid=#{mid} and class.class_id=#{classId}
+    </select>
+    <select id="getSelectedCourse" resultType="Course">
+        SELECT cno, cname, course.tid, period, credits,tname,if(is_elective=1,'选修课','专业课') as is_elective FROM course,teacher
+        WHERE (teacher.tid=course.tid and course.class_id=#{classId} and course.mid=#{mid} and is_elective=0) or EXISTS
+        (
+             SELECT * FROM choose_course
+             WHERE course.cno=choose_course.cno and course.tid=choose_course.tid and choose_course.sid=#{sid} and teacher.tid=choose_course.tid
+        )
+    </select>
+    <select id="getCourse" resultType="Course">
+        select * from course,teacher
+        where teacher.tid=course.tid and is_elective=1 and not exists(
+              select * from choose_course
+              where choose_course.sid=#{sid} and course.tid=choose_course.tid
+            );
+    </select>
+
+    <select id="judgeCourse" resultType="java.lang.Boolean">
+        select count(*) from choose_course
+        where tid=#{tid}
+          and sid=#{sid}
+          and cno=#{cno}
+    </select>
+    <insert id="selectCourse">
+        insert into choose_course values(#{sid},#{cno},#{tid})
+    </insert>
+
+    <select id="getElectiveCourse" resultType="Course">
+        select * from course,teacher,choose_course
+        where teacher.tid=course.tid and course.cno = choose_course.cno and course.tid = choose_course.tid and choose_course.sid = #{sid}
+    </select>
+
+    <insert id="dropElectiveCourse">
+        delete from choose_course where sid = #{sid} and cno = #{cno} and tid = #{tid}
+    </insert>
+
+    <select id="getGrade" resultType="Course">
+        select grade.cno, cname, tname, period, credits, grade.grade, if(grade.grade>=60, (grade.grade/10-5), 0) as gradePoint from grade,course,teacher
+        where grade.cno=course.cno and grade.tid=course.tid and grade.tid=teacher.tid and mid=#{mid} and class_id=#{classId} and grade.sid=#{sid}
+        and grade.is_release=1
+        union
+        select course.cno, cname, tname, period, credits, grade.grade, if(grade.grade>=60, (grade.grade/10-5), 0) as gradePoint from grade,course,teacher,choose_course
+        where choose_course.cno=course.cno and choose_course.tid=course.tid and choose_course.tid=teacher.tid
+          and choose_course.cno=grade.cno and choose_course.tid=grade.tid and grade.tid=teacher.tid
+          and choose_course.sid= #{sid}
+          and grade.is_release=1;
+    </select>
+
+    <select id="getTeacherName" resultType="java.util.HashMap">
+        select distinct tname from teacher
+    </select>
+
+    <select id="getTeacherId" resultType="java.util.HashMap">
+        select tid from teacher where tname=#{tname}
+    </select>
+
+    <select id="searchTeacher" resultType="Teacher">
+        select * from teacher where teacher.tid=#{tid}
+    </select>
+
+    <select id="teacherCourse" resultType="Course">
+        select * from course,class
+        where course.tid=#{tid}
+    </select>
+
+</mapper>

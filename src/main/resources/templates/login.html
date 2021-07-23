@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>登录-集美大学</title>
+    <link rel="stylesheet" th:href="@{/layui-v2.6.8/css/layui.css}" charset="UTF-8">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .bg {
+            position: fixed;
+            height: 100%;
+            width: 100%;
+        }
+
+        input:focus {
+            outline: none;
+            border: 1px solid #f85f5f;
+        }
+
+        input {
+            line-height: 36px;
+            width: 330px;
+            height: 36px;
+            border-radius: 20px;
+            outline: none;
+            border: 1px solid #fff;
+            background-color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 50px;
+            padding-left: 50px;
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px white inset;
+            background-color: rgba(255, 255, 255, 0.5);
+            outline: none;
+            border: 1px solid #fff;
+        }
+
+        .icon {
+            display: inline-block;
+            font-size: 25px;
+            position: relative;
+            left: 39px;
+            color: gray;
+            top: 4px;
+            line-height: 36px;
+        }
+
+        .icon2 {
+            display: inline-block;
+            font-size: 25px;
+            position: relative;
+            right: 376px;
+            color: gray;
+            top: 93px;
+            line-height: 36px;
+        }
+
+        .login {
+            margin-bottom: 40px;
+            width: 382px;
+            height: 36px;
+            color: white;
+            border-radius: 20px;
+            background-color: rgba(238, 36, 36, 0.7);
+            border: 1px solid #fff;
+            padding-left: 0;
+        }
+
+        .forget {
+            color: red;
+            border: 0px solid #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        a:hover {
+            color: red;
+        }
+
+        .error {
+            display: inline-block;
+            color: red;
+            position: relative;
+            right: 105px;
+            top: 40px;
+        }
+
+        .code {
+            width: 85px;
+            height: 45px;
+            vertical-align: top;
+            border-radius: 0px;
+            padding-left: 5px;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="bg" th:style="'background:url(/image/login_bg.png) right center / cover no-repeat;'">
+    <div style=" margin-top: 30px;width: 450px;background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.61) 46%, rgba(255, 255, 255, 0) 90%);display: inline-block">
+        <img th:src="@{/image/login_logo.png}" style="margin:15px 0px;margin-left: 40px;height: 80px;width: 265px;">
+    </div>
+    <div style="float: right;height: 100%;width: 560px;background-color: rgba(255,255,255,0.5);text-align:center;padding-top: 130px">
+        <span style="color: #f85f5f;font-size: 30px">[[#{login.tip}]]</span><br>
+        <span class="error">[[${session.msg}]]</span>
+        <form style="padding-top: 40px" action="login">
+            <i class="layui-icon layui-icon-username icon"></i>
+            <input name="id" value="" th:placeholder="#{login.username}">
+            <i class="layui-icon layui-icon-password icon2"></i>
+            <input name="passWord" type="password" value="" th:placeholder="#{login.password}"><br>
+            <div th:if="${session.error>=3}">
+                <input name="code" class="code" value="" type="text" th:placeholder="#{login.vfcode}">
+                <img id="vericodeImg" th:src="@{/getImage}" style="margin-right: 20px;">
+                <a id="kanbuq" href="javascript:changeImg();" style="margin-right: 35px;color: red">看不清，换一张</a>
+            </div>
+            <input class="login" type="submit" th:value="#{login.btn}"><br/>
+            <a class="forget" target="_blank" th:href="revise_password">[[#{login.forget}]]</a> <br/><br/>
+            <a class="forget" th:href="@{/(l='zh_CN')}" style="margin-right: 50px">中文</a>
+            <a class="forget" th:href="@{/(l='en_US')}">英文</a>
+        </form>
+    </div>
+
+</div>
+
+<script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+<script type="text/javascript" th:src="@{/layui-v2.6.8/layui.js}"></script>
+<script>
+    function changeImg() {
+        $("#vericodeImg").attr("src", "/getimage?" + Math.random());
+    }
+</script>
+</body>
+</html>
